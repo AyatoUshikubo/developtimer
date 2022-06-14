@@ -149,7 +149,6 @@ void DevTimer::Start(){
 	TString Minute=	Form("%02d",T0.GetMinute());
 	TString Second=	Form("%02d",T0.GetSecond());
 
-
    	// SpeechTime(t0);
 	remove("Log/Chain"+id+".log");
 	fp = fopen("Log/Chain"+id+".log", "at");
