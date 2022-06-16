@@ -20,6 +20,9 @@ int HorizontalSize = 860;
 //Chain数
 int Chain_num = 10;
 
+//skip(second)
+int time_skip = 0;
+
 //作業ごとの時間(min)
 int devtime_min = 20;
 int stoptime_min = 10;
@@ -86,7 +89,6 @@ class DevTimer : public TGHorizontalFrame{
 	time_t t0, t, t1, t2, total;
 	int dt;
 	int sh, sm, ss, start;
-	int time_forward;
 	TDatime T0;
 	int ID;
 	TCanvas *c1,*c2;
@@ -131,7 +133,6 @@ void DevTimer::Start(){
    	T0.Set(t0);
    	fLabel2->SetText(Form(" Start at %02d:%02d:%02d", (T0.GetHour()+timedif)%24, T0.GetMinute(), T0.GetSecond()));
 
-	// t0 = t0 - time_forward;
 	for(int i=0;i<fTimeEvents->GetEntries();i++){
 		Event *ev = (Event *)fTimeEvents->At(i);
 		ev->Reset();
@@ -150,15 +151,17 @@ void DevTimer::Start(){
 	TString Second=	Form("%02d",T0.GetSecond());
 
    	// SpeechTime(t0);
-	remove("Log/Chain"+id+".log");
-	fp = fopen("Log/Chain"+id+".log", "at");
-   	// FILE *fp = fopen("Log/Chain"+id+"/"+Hour+Minute+Second+","+Date+".log", "at");
-	// FILE *fp = fopen("develop.log", "at");
-   	// fprintf(fp, "Chain %2d, Start at %02d:%02d:%02d\n", ID, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
-	fprintf(fp, "%ld %02d %02d %02d\n", t0, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
+	if(!skip_if){
+		remove("Log/Chain"+id+".log");
+		fp = fopen("Log/Chain"+id+".log", "at");
+   		// FILE *fp = fopen("Log/Chain"+id+"/"+Hour+Minute+Second+","+Date+".log", "at");
+		// FILE *fp = fopen("develop.log", "at");
+   		// fprintf(fp, "Chain %2d, Start at %02d:%02d:%02d\n", ID, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
+		fprintf(fp, "%ld %02d %02d %02d\n", t0, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
+		fclose(fp);
+	}
    	fprintf(stdout, "Chain %2d, Start at %02d:%02d:%02d\n", ID, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
-   	fclose(fp);
-
+   	
 	skip_if = false;
 	reset_if = false;
 
@@ -180,9 +183,7 @@ void DevTimer::Resume(){
 void DevTimer::Skip(){
 	TString id = Form("%d",ID);
 	fp = fopen("Log/Chain"+id+".log","r");
-	// fscanf("%d",&start);
 	fscanf(fp,"%d %02d %02d %02d",&start,&sh,&sm,&ss);
-	// start = sh*60*60+sm*60+ss;
 	skip_if = true;
 	// printf("%d:%d:%d\n",sh,sm,ss);
 	fclose(fp);
@@ -199,7 +200,10 @@ void DevTimer::Reset(){
 	fb7->SetState(kButtonDisabled);
 	fb8->SetState(kButtonDisabled);
 
+	// skip_if = false;
 	reset_if = true;
+
+	fLabel2->SetText(" Start at - - : - - : - -  ");
 }
 
 void DevTimer::Unlock(){
@@ -227,7 +231,8 @@ void DevTimer::Set0(){
 void DevTimer::OnTimer(){
 	time(&t);
 	if(reset_if){t = t0;}
-	dt= t-t0;
+	dt= t-t0+time_skip;
+	// if(reset_if){dt = washtime;}
 	int h=dt/3600;
 	int m=(dt%3600)/60;
 	int s=dt%60;
@@ -238,7 +243,20 @@ void DevTimer::OnTimer(){
 	c1->cd(1);
 	text->SetTextSize(1.0);
 	text->SetTextColor(kRed);
-	text->DrawTextNDC(0.02,0.1, Form("%02d:%02d:%02d", h,m,s));
+	if(reset_if){text->DrawTextNDC(0.02,0.1, " ");}
+	else
+	{
+	if(dt<washtime){
+		text->DrawTextNDC(0.02,0.1, Form("%02d:%02d:%02d", h,m,s));
+	}
+	else if(dt>=washtime){
+		// if(!reset_if){
+		text->DrawTextNDC(0.02,0.1, "Finished");
+		// }
+		// else{
+		// 	text->DrawTextNDC(0.02,0.1, "    ");
+		// }
+	}
 	text->SetTextSize(0.5);
 	c1->cd(2);
 	Event *ev_current = NULL;
@@ -265,7 +283,12 @@ void DevTimer::OnTimer(){
 		int h2=dt2/3600;
 		int m2=(dt2%3600)/60;
 		int s2=dt2%60;
-		text->DrawTextNDC(0.02,0.1,Form("%02d:%02d:%02d Finished", h2,m2,s2));
+		if(dt<washtime){
+			text->DrawTextNDC(0.02,0.1,Form("%02d:%02d:%02d Finished", h2,m2,s2));
+		}
+		else if(dt>=washtime){
+			DevTimer::Stop();
+		}
 	}
 
 	//行程ごとの時間の描画
@@ -293,8 +316,9 @@ void DevTimer::OnTimer(){
 		int s3=dt3%60;
 		text->DrawTextNDC(0.02,0.55,Form("%02d:%02d:%02d %sing", h3,m3,s3, ev_current->GetMessage()));
 	}
-	else if(dt==washtime){
+	else if(dt>=washtime){
 		DevTimer::Stop();
+	}
 	}
 	
 
@@ -310,8 +334,6 @@ void DevTimer::OnTimer(){
 //class内関数の定義(終わり)
 
 DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFrame,200,HorizontalSize/Chain_num,kHorizontalFrame| kRaisedFrame), ID(id){
-
-	time_forward = 0;
 
 	SetBackgroundColor(TColor::Number2Pixel(kBlack));
 	fTimeEvents = new TObjArray;
@@ -446,7 +468,7 @@ DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFra
    	fb5->Connect("Clicked()", "DevTimer", this, "Unlock()");
    	fb5->Resize(71,24);
    	AddFrame(fb5, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb5->MoveResize(0,70,43,15);
+   	fb5->MoveResize(43,70,43,15);
 	fb5->SetState(kButtonDisabled);
 
 	fb6->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
@@ -460,7 +482,7 @@ DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFra
    	fb7->Connect("Clicked()", "DevTimer", this, "Lock()");
    	fb7->Resize(71,24);
    	AddFrame(fb7, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb7->MoveResize(43,70,43,15);
+   	fb7->MoveResize(0,70,43,15);
 	fb7->SetState(kButtonDisabled);
 
 	fb8->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
