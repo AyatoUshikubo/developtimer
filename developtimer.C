@@ -160,6 +160,7 @@ void DevTimer::Start(){
 		fprintf(fp, "%ld %02d %02d %02d\n", t0, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
 		fclose(fp);
 	}
+	
    	fprintf(stdout, "Chain %2d, Start at %02d:%02d:%02d\n", ID, T0.GetHour(), T0.GetMinute(), T0.GetSecond());
    	
 	skip_if = false;
