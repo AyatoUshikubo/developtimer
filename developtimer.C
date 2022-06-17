@@ -1,4 +1,5 @@
 //dev
+//タイマーのサイズ調整　-> size of timer
 #include"headers.h"
 
 #include<TDatime.h>
@@ -176,6 +177,8 @@ void DevTimer::Start(){
 
 	fb1->SetState(kButtonDisabled);
 	fb4->SetState(kButtonDisabled);
+	fb8->SetState(kButtonDisabled);
+
 	fb5->SetEnabled();
 
 }
@@ -477,21 +480,21 @@ DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFra
    	fb5->Connect("Clicked()", "DevTimer", this, "Unlock()");
    	fb5->Resize(71,24);
    	AddFrame(fb5, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb5->MoveResize(centerbutton,70,button_width,button_hight);
+   	fb5->MoveResize(centerbutton,75,button_width,button_hight);
 	fb5->SetState(kButtonDisabled);
 
 	fb6->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	fb6->Connect("Clicked()", "DevTimer", this, "Reset()");
    	fb6->Resize(71,24);
    	AddFrame(fb6, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb6->MoveResize(leftbutton,70,button_width,button_hight);
+   	fb6->MoveResize(leftbutton,75,button_width,button_hight);
 	fb6->SetState(kButtonDisabled);
 
 	fb7->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	fb7->Connect("Clicked()", "DevTimer", this, "Lock()");
    	fb7->Resize(71,24);
    	AddFrame(fb7, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb7->MoveResize(rightbutton,70,button_width,button_hight);
+   	fb7->MoveResize(rightbutton,75,button_width,button_hight);
 	fb7->SetState(kButtonDisabled);
 
 	fb8->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
