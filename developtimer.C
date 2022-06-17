@@ -11,14 +11,22 @@
 //Mac:" -v Speaker" Speaker = Alex(US)Daniel(GB)Fiona(scotland)Fred(US)Karen(AU)Moira(IE)Rishi(IN)Samantha(US)Tessa(ZA)Veena(IN)Victoria(US) Kyoko(JP)
 TString who_say = " -v Samantha" ;
 
+int timer_right = 150;
+
 //time difference(hour)
 int timedif = 0;
 
 //縦幅
 int HorizontalSize = 860;
 
+int button_width = 45;
+int button_hight = 20;
+int rightbutton = 0;
+int centerbutton = (timer_right-button_width)/2;
+int leftbutton = timer_right-button_width;
+
 //the number of Chain
-int Chain_num = 10;
+int Chain_num = 9;
 
 //skip(second)
 int time_skip = 0;
@@ -445,7 +453,7 @@ DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFra
    	fb1->Connect("Clicked()", "DevTimer", this, "Start()");
    	fb1->Resize(71,24);
    	AddFrame(fb1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb1->MoveResize(0,50,43,15);
+   	fb1->MoveResize(rightbutton,50,button_width,button_hight);
 
    	// fb2->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	// fb2->Connect("Clicked()", "DevTimer", this, "Stop()");
@@ -463,34 +471,34 @@ DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFra
    	fb4->Connect("Clicked()", "DevTimer", this, "Skip()");
    	fb4->Resize(71,24);
    	AddFrame(fb4, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb4->MoveResize(43,50,43,15);
+   	fb4->MoveResize(centerbutton,50,button_width,button_hight);
 
 	fb5->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	fb5->Connect("Clicked()", "DevTimer", this, "Unlock()");
    	fb5->Resize(71,24);
    	AddFrame(fb5, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb5->MoveResize(43,70,43,15);
+   	fb5->MoveResize(centerbutton,70,button_width,button_hight);
 	fb5->SetState(kButtonDisabled);
 
 	fb6->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	fb6->Connect("Clicked()", "DevTimer", this, "Reset()");
    	fb6->Resize(71,24);
    	AddFrame(fb6, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb6->MoveResize(86,70,43,15);
+   	fb6->MoveResize(leftbutton,70,button_width,button_hight);
 	fb6->SetState(kButtonDisabled);
 
 	fb7->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	fb7->Connect("Clicked()", "DevTimer", this, "Lock()");
    	fb7->Resize(71,24);
    	AddFrame(fb7, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb7->MoveResize(0,70,43,15);
+   	fb7->MoveResize(rightbutton,70,button_width,button_hight);
 	fb7->SetState(kButtonDisabled);
 
 	fb8->SetBackgroundColor(TColor::Number2Pixel(kRed+1));
    	fb8->Connect("Clicked()", "DevTimer", this, "Set0()");
    	fb8->Resize(71,24);
    	AddFrame(fb8, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fb8->MoveResize(86,50,43,15);
+   	fb8->MoveResize(leftbutton,50,button_width,button_hight);
 	fb8->SetState(kButtonDisabled);
 
    
@@ -500,7 +508,8 @@ DevTimer::DevTimer(TGMainFrame *fMainFrame, int id) : TGHorizontalFrame(fMainFra
    	c1 = new TCanvas(Form("c%d_1",ID), 10, 10, wfRootEmbeddedCanvas1);
    	fRootEmbeddedCanvas1->AdoptCanvas(c1);
    	AddFrame(fRootEmbeddedCanvas1, new TGLayoutHints(kLHintsLeft | kLHintsTop,2,2,2,2));
-   	fRootEmbeddedCanvas1->MoveResize(130,3,850,100);
+    //Size of timer
+   	fRootEmbeddedCanvas1->MoveResize(timer_right,0,900,95);
 /*   
    	TRootEmbeddedCanvas *fRootEmbeddedCanvas2 = new TRootEmbeddedCanvas(0,this,536,102);
    	Int_t wfRootEmbeddedCanvas2 = fRootEmbeddedCanvas2->GetCanvasWindowId();
