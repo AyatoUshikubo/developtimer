@@ -8,16 +8,16 @@
 #include<TSystem.h>
 
 //Windows:"Zira"
-//Mac:" -v Alex(US)" Daniel(GB)Fiona(scotland)Fred(US)Karen(AU)Moira(IE)Rishi(IN)Samantha(US)Tessa(ZA)Veena(IN)Victoria(US) Kyoko(JP)
+//Mac:" -v Speaker" Speaker = Alex(US)Daniel(GB)Fiona(scotland)Fred(US)Karen(AU)Moira(IE)Rishi(IN)Samantha(US)Tessa(ZA)Veena(IN)Victoria(US) Kyoko(JP)
 TString who_say = " -v Samantha" ;
 
-//時差(hour)
+//time difference(hour)
 int timedif = 0;
 
 //縦幅
 int HorizontalSize = 860;
 
-//Chain数
+//the number of Chain
 int Chain_num = 10;
 
 //skip(second)
@@ -29,7 +29,7 @@ int stoptime_min = 10;
 int fixtime_min = 60;
 int washtime_min = 60;
 
-//累積時間(second)
+//elapsed time(second)
 int devtime = devtime_min*60;
 int stoptime = stoptime_min*60+devtime;
 int fixtime = fixtime_min*60+stoptime;
