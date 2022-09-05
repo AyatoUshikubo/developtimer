@@ -42,7 +42,7 @@ int Chain_num;
 int timedif = 0;
 
 //skip(second)
-int time_skip = (20*60-10)*1;
+int time_skip = (20*60-10)*0;
 
 //配列に使うやつ
 int k;
