@@ -1,0 +1,5 @@
+The number of chains:10
+20 develop
+10 stop
+60 fix
+60 wash
